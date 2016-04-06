@@ -48,8 +48,6 @@ lineEndXpos = round(screenXpixels * 0.91 + screenXpixels * 2/56); % right endpoi
 
 
 %% Load up some variables
-NUMROUNDS = 3;
-lotteryOutcome = 0 + (1-0).*rand(NUMROUNDS,2); % Creates array of random outcome probabilities for both wheels in each round
 
 
 %% Screen 1 - present wheels
