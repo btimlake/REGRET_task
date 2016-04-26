@@ -18,18 +18,21 @@ screenNumber = 0;
 % Define black and white and other colors
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
-winColors = [34, 139, 34]; %ForestGreen
-loseColors = [205, 55, 0]; %OrangeRed3
+% winColors = [34, 139, 34]; %ForestGreen
+% loseColors = [205, 55, 0]; %OrangeRed3
+winColors = black; %black
+loseColors = black; %black
 
 % Open an on screen window
-[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white);
+[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]);
+% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, [255, 255, 255], [0 0 640 480]);
 
 % Get the size of the on screen window
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 
 % Get the centre coordinate of the window
 [xCenter, yCenter] = RectCenter(windowRect);
-screenCenter = [xCenter, yCenter]; % center coordinates
+screenCenter = [xCenter, yCenter]; % center coordinatesf
 
 %% Set position info
 wheelRadius = (screenXpixels*.13);
@@ -42,7 +45,7 @@ rightArrowpos = [screenXpixels*.75-wheelRadius*.25 screenYpixels*.5-wheelRadius*
 topTextYpos = screenYpixels * 2/40; % Screen Y positions of top text
 
 % Set positions of text elements
-leftwheelLeftTextXpos = screenXpixels*.06;
+leftwheelLeftTextXpos = screenXpixels*.05;
 leftwheelRightTextXpos = screenXpixels*.40;
 rightwheelLeftTextXpos = screenXpixels*.54;
 rightwheelRightTextXpos = screenXpixels*.90;
@@ -114,17 +117,17 @@ for i=1:NUMROUNDS
 
 keyName=''; % empty initial value
 
-    [keyTime, keyCode]=KbWait([],2);
-    keyName=KbName(keyCode);
-
-while(strcmp(keyName,'')) % continues until current keyName is space
+%     [keyTime, keyCode]=KbWait([],2);
+%     keyName=KbName(keyCode);
+% 
+% while(strcmp(keyName,'')) % continues until any key pressed
     
-        switch keyName
-            case 'LeftArrow' 
-                currPlayerSelection = 0; % choice is left lottery
-            case 'RightArrow'
-                currPlayerSelection = 1; % choice is right lottery
-        end
+%         switch keyName
+%             case 'LeftArrow' 
+%                 currPlayerSelection = 0; % choice is left lottery
+%             case 'RightArrow'
+%                 currPlayerSelection = 1; % choice is right lottery
+%         end
 
    
     angChoice=0;
@@ -135,22 +138,23 @@ while(strcmp(keyName,'')) % continues until current keyName is space
     % Show lottery choices
     Screen('DrawTexture', window, texProb66, [0 0 550 550], locChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angChoice);
-    DrawFormattedText(window, loseL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount
+    DrawFormattedText(window, loseL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount 
     DrawFormattedText(window, winL, leftwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     % non-choice wheel & arrow
+    
     Screen('DrawTexture', window, texProb66, [0 0 550 550], locNonChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
     DrawFormattedText(window, loseR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount
     DrawFormattedText(window, winR, rightwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     Screen('Flip', window)
 
-        switch keyName
-            case 'LeftArrow' 
-                currPlayerSelection = 0; % choice is left lottery
-            case 'RightArrow'
-                currPlayerSelection = 1; % choice is right lottery
-        end
-end
+%         switch keyName
+%             case 'LeftArrow' 
+%                 currPlayerSelection = 0; % choice is left lottery
+%             case 'RightArrow'
+%                 currPlayerSelection = 1; % choice is right lottery
+%         end
+% end
     WaitSecs(1);
     
 %             switch keyName
@@ -173,29 +177,31 @@ end
     angChoice=0;
     angNonChoice=0;
 %  && angNonChoice < (4*360 + 360*lotteryOutcome(i,2))
-    while( (angChoice < (4*360 + 360*lotteryOutcome(i,1))) || (angNonChoice < (4*360 + 360*lotteryOutcome(i,2))) ) %% 4*360 means the arrow will spin 4 full rounds before stopping at the outcome
+while( (angChoice < (4*360 + 360*lotteryOutcome(i,1))) || (angNonChoice < (4*360 + 360*lotteryOutcome(i,2))) ) %% 4*360 means the arrow will spin 4 full rounds before stopping at the outcome
+    if(angChoice < (4*360 + 360*lotteryOutcome(i,1)))
         angChoice=angChoice+degPerFrame;
+    end
+    if(angNonChoice < (4*360 + 360*lotteryOutcome(i,2)))
         angNonChoice=angNonChoice+degPerFrame;
-        % choice wheel & arrow
+    end
+% choice wheel & arrow
         Screen('DrawTexture', window, texProb66, [0 0 550 550], locChoice); %%!! Location should not be hard coded
         Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice,angChoice);
+    DrawFormattedText(window, loseL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount 
+    DrawFormattedText(window, winL, leftwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
         % non-choice wheel & arrow        
         Screen('DrawTexture', window, texProb66, [0 0 550 550], locNonChoice); %%!! Location should not be hard coded
         Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice,angNonChoice);
+    DrawFormattedText(window, loseR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount
+    DrawFormattedText(window, winR, rightwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
         vbl  = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
-    end
-    
-%     while(angNonChoice < (4*360 + 360*lotteryOutcome(i,2))) %% 4*360 means the arrow will spin 4 full rounds before stopping at the outcome
-%         angNonChoice=angNonChoice+degPerFrame;
-%         % non-choice wheel & arrow        
-%         Screen('DrawTexture', window, texProb66, [0 0 550 550], locNonChoice); %%!! Location should not be hard coded
-%         Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice,angNonChoice);
-%     end
-%         vbl  = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
+end
 
-    WaitSecs(2); 
+
 
 end
+
+    WaitSecs(2);
 
 % Clear the screen
 sca;
