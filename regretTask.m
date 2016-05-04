@@ -3,6 +3,7 @@ sca;
 close all;
 clearvars;
 
+load('regretTasktrialWheels.mat')
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
 
@@ -25,7 +26,7 @@ loseColors = black; %black
 
 % Open an on screen window
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]);
-% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, [255, 255, 255], [0 0 640 480]);
+% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, [255, 255, 255]);
 
 % Get the size of the on screen window
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
@@ -102,14 +103,25 @@ degPerFrame = 10;
 
 arrow=imread(fullfile('arrow.png')); %load image of arrow
 texArrow = Screen('MakeTexture', window, arrow); % Draw arrow to the offscreen window
-prop66=imread(fullfile('propCircle.png')); %load image of arrow
-texProb66 = Screen('MakeTexture', window, prop66); % Draw arrow to the offscreen window
+prop25=imread(fullfile('propCircle25-75.png')); %load image of circle
+prop33=imread(fullfile('propCircle33-66.png')); %load image of circle
+prop50=imread(fullfile('propCircle50-50.png')); %load image of circle
+prop66=imread(fullfile('propCircle66-33.png')); %load image of circle
+prop75=imread(fullfile('propCircle75-25.png')); %load image of circle
+texProb25 = Screen('MakeTexture', window, prop25); % Draw circle to the offscreen window
+texProb33 = Screen('MakeTexture', window, prop33); % Draw circle to the offscreen window
+texProb50 = Screen('MakeTexture', window, prop50); % Draw circle to the offscreen window
+texProb66 = Screen('MakeTexture', window, prop66); % Draw circle to the offscreen window
+texProb75 = Screen('MakeTexture', window, prop75); % Draw circle to the offscreen window
 
 
 % Sync us and get a time stamp
 vbl = Screen('Flip', window);
 waitframes = 1;
 
+%%
+% Make an array with the variables for each trial
+% Set loop to get variables (wheels, awards) for each trial
 
 for i=1:NUMROUNDS
 
@@ -129,20 +141,27 @@ keyName=''; % empty initial value
 %                 currPlayerSelection = 1; % choice is right lottery
 %         end
 
-   
+% Set win/lose values based on trial round
+winL = num2str(regretTasktrialWheels.wlv1(i));
+loseL = num2str(regretTasktrialWheels.wlv2(i));
+winR = num2str(regretTasktrialWheels.wrv1(i));
+loseR = num2str(regretTasktrialWheels.wrv2(i));
+wheelL = ['texProb' num2str(regretTasktrialWheels.wlp1(i)*100)];
+wheelR = ['texProb' num2str(regretTasktrialWheels.wrp1(i)*100)];
+
     angChoice=0;
     angNonChoice=0;
     
     DrawFormattedText(window, topInstructText, 'center', topTextYpos); % Instruction text
 
     % Show lottery choices
-    Screen('DrawTexture', window, texProb66, [0 0 550 550], locChoice); % Draw probability circle
+    Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angChoice);
     DrawFormattedText(window, loseL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount 
     DrawFormattedText(window, winL, leftwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     % non-choice wheel & arrow
     
-    Screen('DrawTexture', window, texProb66, [0 0 550 550], locNonChoice); % Draw probability circle
+    Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
     DrawFormattedText(window, loseR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount
     DrawFormattedText(window, winR, rightwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
@@ -185,12 +204,12 @@ while( (angChoice < (4*360 + 360*lotteryOutcome(i,1))) || (angNonChoice < (4*360
         angNonChoice=angNonChoice+degPerFrame;
     end
 % choice wheel & arrow
-        Screen('DrawTexture', window, texProb66, [0 0 550 550], locChoice); %%!! Location should not be hard coded
+        Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); %%!! Location should not be hard coded
         Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice,angChoice);
     DrawFormattedText(window, loseL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount 
     DrawFormattedText(window, winL, leftwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
         % non-choice wheel & arrow        
-        Screen('DrawTexture', window, texProb66, [0 0 550 550], locNonChoice); %%!! Location should not be hard coded
+        Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); %%!! Location should not be hard coded
         Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice,angNonChoice);
     DrawFormattedText(window, loseR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount
     DrawFormattedText(window, winR, rightwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
