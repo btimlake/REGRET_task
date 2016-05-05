@@ -152,30 +152,33 @@ loseR = num2str(regretTasktrialWheels.wrv2(i));
 wheelL = [];
 wheelR = [];
 
-switch regretTasktrialWheels.wlp1(i)
-    case regretTasktrialWheels.wlp1(i)==0.25
+probL = num2str(regretTasktrialWheels.wlp1(i));
+probR = num2str(regretTasktrialWheels.wrp1(i));
+
+switch probL
+    case {'0.25'}
     wheelL=texProb25;
-    case regretTasktrialWheels.wlp1(i)==0.33
-    wheelL=texProb33;
-    case regretTasktrialWheels.wlp1(i)==0.50
+    case {'0.33'}
+    wheelL=texProb3';
+    case {'0.5'}
     wheelL=texProb50;
-    case regretTasktrialWheels.wlp1(i)==0.66
+    case {'0.66'}
     wheelL=texProb66;
-    case regretTasktrialWheels.wlp1(i)==0.75
+    case {'0.75'}
     wheelL=texProb75;
 end
 
   
-switch regretTasktrialWheels.wrp1(i)
-    case regretTasktrialWheels.wrp1(i)==0.25
+switch probR
+    case {'0.25'}
     wheelR=texProb25;
-    case regretTasktrialWheels.wrp1(i)==0.33
+    case {'0.33'}
     wheelR=texProb33;
-    case regretTasktrialWheels.wrp1(i)==0.50
+    case {'0.5'}
     wheelR=texProb50;
-    case regretTasktrialWheels.wrp1(i)==0.66
+    case {'0.66'}
     wheelR=texProb66;
-    case regretTasktrialWheels.wrp1(i)==0.75
+    case {'0.75'}
     wheelR=texProb75;
 end      
         

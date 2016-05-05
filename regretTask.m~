@@ -147,7 +147,43 @@ loseL = num2str(regretTasktrialWheels.wlv2(i));
 winR = num2str(regretTasktrialWheels.wrv1(i));
 loseR = num2str(regretTasktrialWheels.wrv2(i));
 wheelL = ['texProb' num2str(regretTasktrialWheels.wlp1(i)*100)];
-wheelR = ['texProb' num2str(regretTasktrialWheels.wrp1(i)*100)];
+% wheelR = ['texProb' num2str(regretTasktrialWheels.wrp1(i)*100)];
+
+wheelL = [];
+wheelR = [];
+
+probL = num2str(regretTasktrialWheels.wlp1(i));
+probR = num2str(regretTasktrialWheels.wrp1(i));
+
+switch probL
+    case {'0.25'}
+    wheelL='texProb25';
+    case {'0.33'}
+    wheelL='texProb33';
+    case {'0.50'}
+    wheelL='texProb50';
+    case {'0.66'}
+    wheelL='texProb66';
+    case {'0.75'}
+    wheelL='texProb75';
+end
+
+  
+switch regretTasktrialWheels.wrp1(i)
+    case {'0.25'}
+    wheelL='texProb25';
+    case {'0.33'}
+    wheelL='texProb33';
+    case {'0.50'}
+    wheelL='texProb50';
+    case {'0.66'}
+    wheelL='texProb66';
+    case {'0.75'}
+    wheelL='texProb75';
+end      
+        
+% wheelL = texProb66
+% wheelR = texProb66
 
     angChoice=0;
     angNonChoice=0;
