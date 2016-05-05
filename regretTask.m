@@ -4,10 +4,32 @@ close all;
 clearvars;
 
 load('regretTasktrialWheels.mat')
-% Here we call some default settings for setting up Psychtoolbox
+
+%% Screen -1: Participant number entry
+
+%%% Enter participant number (taken from:
+%%% http://www.academia.edu/2614964/Creating_experiments_using_Matlab_and_Psychtoolbox)
+fail1='Please enter a participant number.'; %error message
+prompt = {'Enter participant number:'};
+dlg_title ='New Participant';
+num_lines = 1;
+def = {'0'};
+answer = inputdlg(prompt,dlg_title,num_lines,def);%presents box to enterdata into
+switch isempty(answer)
+    case 1 %deals with both cancel and X presses 
+        error(fail1)
+    case 0
+        particNum=(answer{1});
+end
+
+% uncomment after debugging
+% HideCursor;
+
+%% Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
 
 Screen('Preference', 'SkipSyncTests', 2);
+KbName('UnifyKeyNames');
 
 % Get the screen numbers
 screens = Screen('Screens');
@@ -19,14 +41,18 @@ screenNumber = 0;
 % Define black and white and other colors
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
-% winColors = [34, 139, 34]; %ForestGreen
-% loseColors = [205, 55, 0]; %OrangeRed3
-winColors = black; %black
-loseColors = black; %black
+BG=[1 1 1]; % set background color of PNG imports
+% NOTE that colors now have to be in the set [0,1], so to get values, just 
+% divide old RGB amounts by 255
+winColors = [.1333, .5451, .1333]; %ForestGreen
+loseColors = [.8039, .2157, 0]; %OrangeRed3
+% winColors = black; %black
+% loseColors = black; %black
+chooseColors = [1, .84, 0]; %Gold
 
 % Open an on screen window
-[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]);
-% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, [255, 255, 255]);
+% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]);
+[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white);
 
 % Get the size of the on screen window
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
@@ -34,6 +60,7 @@ loseColors = black; %black
 % Get the centre coordinate of the window
 [xCenter, yCenter] = RectCenter(windowRect);
 screenCenter = [xCenter, yCenter]; % center coordinatesf
+
 
 %% Set position info
 wheelRadius = (screenXpixels*.13);
@@ -43,17 +70,28 @@ leftWheelpos = [screenXpixels*.25-wheelRadius screenYpixels*.5-wheelRadius scree
 rightWheelpos = [screenXpixels*.75-wheelRadius screenYpixels*.5-wheelRadius screenXpixels*.75+wheelRadius screenYpixels*.5+wheelRadius];
 leftArrowpos = [screenXpixels*.25-wheelRadius*.25 screenYpixels*.5-wheelRadius*.75 screenXpixels*.25+wheelRadius*.25 screenYpixels*.5+wheelRadius*.75];
 rightArrowpos = [screenXpixels*.75-wheelRadius*.25 screenYpixels*.5-wheelRadius*.75 screenXpixels*.75+wheelRadius*.25 screenYpixels*.5+wheelRadius*.75];
-topTextYpos = screenYpixels * 2/40; % Screen Y positions of top text
 
 % Set positions of text elements
-leftwheelLeftTextXpos = screenXpixels*.05;
-leftwheelRightTextXpos = screenXpixels*.40;
+topTextYpos = screenYpixels * 2/40; % Screen Y positions of top text
+leftwheelLeftTextXpos = screenXpixels*.04;
+leftwheelRightTextXpos = screenXpixels*.4;
 rightwheelLeftTextXpos = screenXpixels*.54;
-rightwheelRightTextXpos = screenXpixels*.90;
-leftwheelLeftTextYpos = screenYpixels*.5;
+rightwheelRightTextXpos = screenXpixels*.9;
+leftwheelLeftTextYpos = screenYpixels*.45;
 leftwheelRightTextYpos = screenYpixels*.5;
-rightwheelLeftTextYpos = screenYpixels*.5;
+rightwheelLeftTextYpos = screenYpixels*.45;
 rightwheelRightTextYpos = screenYpixels*.5;
+
+% Rect positions/dimensions based on wheel positions/dimensions
+rectWidth = screenXpixels*.3; % based on wheelRadius = (screenXpixels*.13);
+rectHeight = screenYpixels*.45;
+baseRect = [0 0 rectWidth rectHeight];
+rectYpos = screenYpixels*.5;
+leftRectXpos = screenXpixels*.25;
+rightRectXpos = screenXpixels*.75;
+leftRect = CenterRectOnPointd(baseRect, leftRectXpos, rectYpos);
+rightRect = CenterRectOnPointd(baseRect, rightRectXpos, rectYpos);
+lineWeight = round(screenYpixels*.01);
 
 % temporary; will be modified to make these vary depending on choice
 locChoice = leftWheelpos;  
@@ -103,18 +141,26 @@ degPerFrame = 10;
 
 arrow=imread(fullfile('arrow.png')); %load image of arrow
 texArrow = Screen('MakeTexture', window, arrow); % Draw arrow to the offscreen window
-prop25=imread(fullfile('propCircle25-75.png')); %load image of circle
-prop33=imread(fullfile('propCircle33-66.png')); %load image of circle
-prop50=imread(fullfile('propCircle50-50.png')); %load image of circle
-prop66=imread(fullfile('propCircle66-33.png')); %load image of circle
-prop75=imread(fullfile('propCircle75-25.png')); %load image of circle
+prop25=imread(fullfile('propCircle25-75.png'), 'BackgroundColor',BG); %load image of circle
+prop33=imread(fullfile('propCircle33-66.png'), 'BackgroundColor',BG ); %load image of circle
+prop50=imread(fullfile('propCircle50-50.png'), 'BackgroundColor',BG); %load image of circle
+prop66=imread(fullfile('propCircle66-33.png'), 'BackgroundColor',BG); %load image of circle
+prop75=imread(fullfile('propCircle75-25.png'), 'BackgroundColor',BG); %load image of circle
 texProb25 = Screen('MakeTexture', window, prop25); % Draw circle to the offscreen window
 texProb33 = Screen('MakeTexture', window, prop33); % Draw circle to the offscreen window
 texProb50 = Screen('MakeTexture', window, prop50); % Draw circle to the offscreen window
 texProb66 = Screen('MakeTexture', window, prop66); % Draw circle to the offscreen window
 texProb75 = Screen('MakeTexture', window, prop75); % Draw circle to the offscreen window
 
-
+%     [...] = imread(...,'BackgroundColor',BG) composites any transparent 
+%     pixels in the input image against the color specified in BG.  If BG is
+%     'none', then no compositing is performed. Otherwise, if the input image
+%     is indexed, BG should be an integer in the range [1,P] where P is the
+%     colormap length. If the input image is grayscale, BG should be a value
+%     in the range [0,1].  If the input image is RGB, BG should be a 
+%     three-element vector whose values are in the range [0,1]. The string
+%     'BackgroundColor' may be abbreviated. 
+    
 % Sync us and get a time stamp
 vbl = Screen('Flip', window);
 waitframes = 1;
@@ -193,14 +239,14 @@ end
     % Show lottery choices
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angChoice);
-    DrawFormattedText(window, loseL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount 
-    DrawFormattedText(window, winL, leftwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
+    DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
     % non-choice wheel & arrow
     
     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
-    DrawFormattedText(window, loseR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount
-    DrawFormattedText(window, winR, rightwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
     Screen('Flip', window)
 
 %         switch keyName
@@ -210,8 +256,61 @@ end
 %                 currPlayerSelection = 1; % choice is right lottery
 %         end
 % end
-    WaitSecs(1);
+
+% while(~strcmp(keyName,'space')) % continues until current keyName is space
+
+% WaitSecs(1);
+
+RestrictKeysForKbCheck([79, 80]);
+
+[keyTime, keyCode]=KbWait([],2);
+keyName=KbName(keyCode);
+
+% while keyName~='LeftArrow' && keyName~='RightArrow'
+% while keyCode~=80 && keyCode~=79
+% arrowLeft = KbName('LeftArrow');
+% arrowRight = KbName('RightArrow');
+
+
+% while ~strcmp(keyName,'LeftArrow') && ~strcmp(keyName,'RightArrow')
+%     keyName=GetChar;
+
+
+%     if keyName == 'LeftArrow';
+    if strcmp(keyName,'LeftArrow')
+        rectPos = leftRect;
+%     rectPos = Screen('FrameRect', window, winColors, leftRect); % Draw the top rects to the screen
+%     Screen('Flip', window)
+
+%     elseif keyName == 'RightArrow';
+    elseif strcmp(keyName,'RightArrow')
+        rectPos = rightRect;
+%     Screen('FrameRect', window, winColors, rightRect); % Draw the top rects to the screen
+%     Screen('Flip', window)
+%     else
+%         KbWait([],2);
+    end
     
+% end
+
+RestrictKeysForKbCheck([]);
+
+%% show choice rect over wheels
+    Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
+    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angChoice);
+    DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
+    DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
+    % non-choice wheel & arrow
+    
+    Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
+    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
+    DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
+        Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
+        Screen('Flip', window)
+    
+ WaitSecs(1);   
+
 %             switch keyName
 %             case 'LeftArrow' 
 %                 currPlayerSelection = currPlayerSelection - 1;
@@ -240,23 +339,30 @@ while( (angChoice < (4*360 + 360*lotteryOutcome(i,1))) || (angNonChoice < (4*360
         angNonChoice=angNonChoice+degPerFrame;
     end
 % choice wheel & arrow
-        Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); %%!! Location should not be hard coded
-        Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice,angChoice);
-    DrawFormattedText(window, loseL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount 
-    DrawFormattedText(window, winL, leftwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
-        % non-choice wheel & arrow        
-        Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); %%!! Location should not be hard coded
-        Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice,angNonChoice);
-    DrawFormattedText(window, loseR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, loseColors); % loss amount
-    DrawFormattedText(window, winR, rightwheelRightTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
+    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angChoice);
+    DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
+    DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
+    % non-choice wheel & arrow
+    
+    Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
+    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
+    DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
+        Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
         vbl  = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
 end
 
+WaitSecs(2); 
+
+% Write logfile
+% save(['oneshot-subj_' num2str(particNum) '-' DateTime], 'wofChoice', 'wofEarnings', 'trialLength');
 
 
+    
 end
 
     WaitSecs(2);
-
+    
 % Clear the screen
 sca;
