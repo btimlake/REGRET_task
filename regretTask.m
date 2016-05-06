@@ -3,9 +3,10 @@ sca;
 close all;
 clearvars;
 
-load('regretTasktrialWheels.mat')
+load('regretTasktrialWheels.mat')       % Load the preset wheel probabilites and values
+DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
-%% Screen -1: Participant number entry
+%% Screen -1: Participant number entry [delete when combined with Patent Race]
 
 %%% Enter participant number (taken from:
 %%% http://www.academia.edu/2614964/Creating_experiments_using_Matlab_and_Psychtoolbox)
@@ -74,14 +75,14 @@ rightArrowpos = [screenXpixels*.75-wheelRadius*.25 screenYpixels*.5-wheelRadius*
 % Set positions of text elements
 topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
 botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
-leftwheelLeftTextXpos = screenXpixels*.04;
-leftwheelRightTextXpos = screenXpixels*.4;
-rightwheelLeftTextXpos = screenXpixels*.54;
-rightwheelRightTextXpos = screenXpixels*.9;
-leftwheelLeftTextYpos = screenYpixels*.45;
-leftwheelRightTextYpos = screenYpixels*.5;
-rightwheelLeftTextYpos = screenYpixels*.45;
-rightwheelRightTextYpos = screenYpixels*.5;
+leftwheelLeftTextXpos = screenXpixels*.035;
+leftwheelRightTextXpos = screenXpixels*.40;
+rightwheelLeftTextXpos = screenXpixels*.52;
+rightwheelRightTextXpos = screenXpixels*.91;
+leftwheelLeftTextYpos = screenYpixels*.43;
+leftwheelRightTextYpos = screenYpixels*.53;
+rightwheelLeftTextYpos = screenYpixels*.43;
+rightwheelRightTextYpos = screenYpixels*.53;
 
 % Rect positions/dimensions based on wheel positions/dimensions
 rectWidth = screenXpixels*.3; % based on wheelRadius = (screenXpixels*.13);
@@ -114,16 +115,16 @@ fontSize = round(screenYpixels * 2/40);
 % Set some variables
 NUMROUNDS = 3;
 lotteryOutcome = 0 + (1-0).*rand(NUMROUNDS,2); % Creates array of random outcome probabilities for both wheels in each round
-% outcome values
-OUTCOME1 = 50;
-OUTCOME2 = -50;
-OUTCOME3 = 200;
-OUTCOME4 = -50;
-% outcome strings
-winL = num2str(OUTCOME1);
-loseL = num2str(OUTCOME2);
-winR = num2str(OUTCOME3);
-loseR = num2str(OUTCOME4);
+% outcome values from earlier iterations
+% OUTCOME1 = 50;
+% OUTCOME2 = -50;
+% OUTCOME3 = 200;
+% OUTCOME4 = -50;
+% % outcome strings
+% winL = num2str(OUTCOME1);
+% loseL = num2str(OUTCOME2);
+% winR = num2str(OUTCOME3);
+% loseR = num2str(OUTCOME4);
 
 %% back to original
 % Maximum priority level
@@ -141,7 +142,7 @@ degPerFrame = 10;
 % posXs = [screenXpixels * 0.25 screenXpixels * 0.5 screenXpixels * 0.75];
 % posYs = ones(1, numRects) .* (screenYpixels / 2);
 
-arrow=imread(fullfile('arrow.png')); %load image of arrow
+arrow=imread(fullfile('arrow.png'), 'BackgroundColor',BG); %load image of arrow
 texArrow = Screen('MakeTexture', window, arrow); % Draw arrow to the offscreen window
 prop25=imread(fullfile('propCircle25-75.png'), 'BackgroundColor',BG); %load image of circle
 prop33=imread(fullfile('propCircle33-66.png'), 'BackgroundColor',BG ); %load image of circle
@@ -167,9 +168,94 @@ texProb75 = Screen('MakeTexture', window, prop75); % Draw circle to the offscree
 vbl = Screen('Flip', window);
 waitframes = 1;
 
-%%
-% Make an array with the variables for each trial
-% Set loop to get variables (wheels, awards) for each trial
+%% Screen 0 - Instructions
+% Instruct text positions
+instruct1TextYpos = screenYpixels * 2/42; 
+instruct2TextYpos = screenYpixels * 4/42; 
+instruct3TextYpos = screenYpixels * 6/42; 
+instruct4TextYpos = screenYpixels * 8/42; 
+instruct5TextYpos = screenYpixels * 10/42; 
+instruct6TextYpos = screenYpixels * 12/42; 
+instruct7TextYpos = screenYpixels * 14/42; 
+instruct8TextYpos = screenYpixels * 16/42; 
+instruct9TextYpos = screenYpixels * 18/42; 
+instruct10TextYpos = screenYpixels * 20/42; 
+instruct11TextYpos = screenYpixels * 22/42; 
+instruct12TextYpos = screenYpixels * 24/42; 
+instruct13TextYpos = screenYpixels * 26/42; 
+instruct14TextYpos = screenYpixels * 28/42; 
+instruct15TextYpos = screenYpixels * 30/42; 
+instruct16TextYpos = screenYpixels * 32/42; 
+instruct17TextYpos = screenYpixels * 34/42; 
+instruct18TextYpos = screenYpixels * 36/42; 
+instruct19TextYpos = screenYpixels * 38/42; 
+instructbotTextYpos = screenYpixels * 40/42; 
+
+% Instruction text
+instructText0 = ['Hit the SPACE bar to continue.'];
+
+instructText11 = ['You will see two lottery wheels,'];
+instructText12 = ['each split into a winning portion '];
+instructText13 = ['and a losing portion.'];
+instructText14 = ['You must choose one by pressing the'];
+instructText15 = ['left arrow key or the right arrow key.'];
+instructText16 = ['A pointer will spin, and if it stops'];
+instructText17 = ['in the winning portion, your score'];
+instructText18 = ['increases; if it is pointing to the'];
+instructText19 = ['losing portion, your score decreases.'];
+
+instructText20 = ['You will also see the result of the'];
+instructText21 = ['wheel you did not choose, but it will'];
+instructText22 = ['not change your score.'];
+
+instructText23 = ['You will practice 10 times, but these'];
+instructText24 = ['trials do not affect your payment.'];
+instructText25 = ['The final game is the only one that'];
+instructText26 = ['matters, and you will be told when'];
+instructText27 = ['that game is about to happen.'];
+instructText28 = ['In that game, you can either add to'];
+instructText29 = ['your 50 euros or lose from it.'];
+
+% Instruction text colors
+instructCola = [0, 0.4078, 0.5451]; %DeepSkyBlue4
+instructColb = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
+
+keyName=''; % empty initial value
+
+
+while(~strcmp(keyName,'space')) % continues until current keyName is space
+    
+    DrawFormattedText(window, instructText11, 'center', instruct1TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText12, 'center', instruct2TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText13, 'center', instruct3TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText14, 'center', instruct4TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText15, 'center', instruct5TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText16, 'center', instruct6TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText17, 'center', instruct7TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText18, 'center', instruct8TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText19, 'center', instruct9TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText20, 'center', instruct10TextYpos, instructColb); % Draw betting instructions
+    DrawFormattedText(window, instructText21, 'center', instruct11TextYpos, instructColb); % Draw betting instructions
+    DrawFormattedText(window, instructText22, 'center', instruct12TextYpos, instructColb); % Draw betting instructions
+    DrawFormattedText(window, instructText23, 'center', instruct13TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText24, 'center', instruct14TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText25, 'center', instruct15TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText26, 'center', instruct16TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText27, 'center', instruct17TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText28, 'center', instruct18TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText29, 'center', instruct19TextYpos, instructCola); % Draw betting instructions
+    DrawFormattedText(window, instructText0, 'center', instructbotTextYpos, black); % Draw betting instructions
+    Screen('Flip', window); % Flip to the screen
+
+    [keyTime, keyCode]=KbWait([],2);
+    keyName=KbName(keyCode);
+
+end
+
+WaitSecs(.25);
+
+
+%% Begin trial loop
 
 for i=1:NUMROUNDS
 
@@ -202,8 +288,6 @@ wheelR = [];
 
 probL = num2str(regretTasktrialWheels.wlp1(i));
 probR = num2str(regretTasktrialWheels.wrp1(i));
-probLloss = 1-probL;
-probRloss = 1-probR;
 
 switch probL
     case {'0.25'}
@@ -238,7 +322,7 @@ end
     angChoice=0;
     angNonChoice=0;
     
-    DrawFormattedText(window, topInstructText, 'center', topTextYpos); % Instruction text
+    DrawFormattedText(window, topInstructText, 'center', topTextYpos, black); % Instruction text
 
     % Show lottery choices
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
@@ -310,28 +394,28 @@ arrowAngleR=360*lotteryOutcome(i,2);
 % Determine whether the selection resulted in win or loss
 if wofChoice(i) == 1    % Participant chose wheel 1
     
-    if arrowAngleL >= 360*probLloss;   % If endpoint of arrow is greater than loss zone, win
-    winAmount(i) = wlv1(i);
+    if arrowAngleL > 360*regretTasktrialWheels.wlp2(i);   % If endpoint of arrow is greater than loss zone, win
+    winAmount(i) = regretTasktrialWheels.wlv1(i);
     wofEarnings(i) = winAmount(i);  % set earngings for log file
     botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message
     botTextColor = winColors;
     else   % If endpoint of arrow is less than loss zone, loss
-    lossAmount(i) = wlv2(i);
-    wofEarnings(i) = 0-lossAmount(i);  % set losses for log file
+    lossAmount(i) = regretTasktrialWheels.wlv2(i);
+    wofEarnings(i) = lossAmount(i);  % set losses for log file
     botResultText = ['You lost ' num2str(lossAmount(i)) '.'];  % Set feedback text to losing message
     botTextColor = loseColors;
     end
 
-elseif wofChoice(i) == 2    % Participant chose wheel 1
+elseif wofChoice(i) == 2    % Participant chose wheel 2
     
-    if arrowAngleR >= 360*probRloss;   % If endpoint of arrow is greater than loss zone, win
-    winAmount(i) = wrv1(i);
+    if arrowAngleR > 360*regretTasktrialWheels.wrp2(i);   % If endpoint of arrow is greater than loss zone, win
+    winAmount(i) = regretTasktrialWheels.wrv1(i);
     wofEarnings(i) = winAmount(i);  % set earngings for log file
     botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message
     botTextColor = winColors;
     else   % If endpoint of arrow is less than loss zone, loss
-    lossAmount(i) = wrv2(i);
-    wofEarnings(i) = 0-lossAmount(i);  % set losses for log file
+    lossAmount(i) = regretTasktrialWheels.wrv2(i);
+    wofEarnings(i) = lossAmount(i);  % set losses for log file
     botResultText = ['You lost ' num2str(lossAmount(i)) '.'];  % Set feedback text to losing message
     botTextColor = loseColors;
     end
@@ -351,21 +435,38 @@ while( (angChoice < (4*360 + 360*lotteryOutcome(i,1))) || (angNonChoice < (4*360
     if(angNonChoice < (4*360 + 360*lotteryOutcome(i,2)))
         angNonChoice=angNonChoice+degPerFrame;
     end
-% choice wheel & arrow
+% Left wheel & arrow
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angChoice);
     DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
-    % non-choice wheel & arrow
-    
+% Right wheel & arrow    
     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
         Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
-        DrawFormattedText(window, botResultText, 'center', botTextYpos, botTextColor); % Result text
         vbl  = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
 end
+
+%% Screen 4 - Result
+
+% Hold on last arrow position and give result text
+    angLeftArrow=(4*360 + 360*lotteryOutcome(i,1)); % final left arrow position
+    angRightArrow=(4*360 + 360*lotteryOutcome(i,2)); % final right arrow position
+% Left wheel & arrow
+    Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
+    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angLeftArrow);
+    DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
+    DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
+% Right wheel & arrow        
+    Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
+    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angRightArrow);
+    DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
+        Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
+        DrawFormattedText(window, botResultText, 'center', botTextYpos, botTextColor); % Result text
+    Screen('Flip', window)
 
 WaitSecs(2); 
 
@@ -375,8 +476,10 @@ for i=1:NUMROUNDS
         wofTrialLength(i) = wofTrialEndTime(i)-wofTrialStartTime(i);
 end
 
+totalEarnings = sum(wofEarnings);
+
 % Write logfile
-% save(['oneshot-subj_' num2str(particNum) '-' DateTime], 'wofChoice', 'wofEarnings', 'wofTrialLength');
+save(['oneshot-subj_' num2str(particNum) '-' DateTime], 'wofChoice', 'wofEarnings', 'wofTrialLength');
 
     WaitSecs(2);
     
