@@ -51,8 +51,8 @@ loseColors = [.8039, .2157, 0]; %OrangeRed3
 chooseColors = [1, .84, 0]; %Gold
 
 % Open an on screen window
-% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]);
-[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white);
+[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]);
+% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white);
 
 % Get the size of the on screen window
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
@@ -72,7 +72,8 @@ leftArrowpos = [screenXpixels*.25-wheelRadius*.25 screenYpixels*.5-wheelRadius*.
 rightArrowpos = [screenXpixels*.75-wheelRadius*.25 screenYpixels*.5-wheelRadius*.75 screenXpixels*.75+wheelRadius*.25 screenYpixels*.5+wheelRadius*.75];
 
 % Set positions of text elements
-topTextYpos = screenYpixels * 2/40; % Screen Y positions of top text
+topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
+botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
 leftwheelLeftTextXpos = screenXpixels*.04;
 leftwheelRightTextXpos = screenXpixels*.4;
 rightwheelLeftTextXpos = screenXpixels*.54;
@@ -94,13 +95,14 @@ rightRect = CenterRectOnPointd(baseRect, rightRectXpos, rectYpos);
 lineWeight = round(screenYpixels*.01);
 
 % temporary; will be modified to make these vary depending on choice
+% Not sure anymore that this is needed
 locChoice = leftWheelpos;  
 locNonChoice = rightWheelpos; 
 arrowChoice = leftArrowpos;
 arrowNonChoice = rightArrowpos;
 
 % Display text
-topInstructText = ['Choose which wheel to spin.'];
+topInstructText = ['Choose which wheel to play.'];
 
 % Select specific text font, style and size:
 fontSize = round(screenYpixels * 2/40);
@@ -200,6 +202,8 @@ wheelR = [];
 
 probL = num2str(regretTasktrialWheels.wlp1(i));
 probR = num2str(regretTasktrialWheels.wrp1(i));
+probLloss = 1-probL;
+probRloss = 1-probR;
 
 switch probL
     case {'0.25'}
@@ -248,52 +252,24 @@ end
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
     Screen('Flip', window)
+ 
+wofTrialStartTime(i) = GetSecs; % trial time start
 
-%         switch keyName
-%             case 'LeftArrow' 
-%                 currPlayerSelection = 0; % choice is left lottery
-%             case 'RightArrow'
-%                 currPlayerSelection = 1; % choice is right lottery
-%         end
-% end
+RestrictKeysForKbCheck([79, 80]); % limit recognized presses to left and right arrows
+[keyTime, keyCode]=KbWait([],2); % Wait for a key to be pushed and released
+keyName=KbName(keyCode); % get the name of which key was pressed
 
-% while(~strcmp(keyName,'space')) % continues until current keyName is space
-
-% WaitSecs(1);
-
-RestrictKeysForKbCheck([79, 80]);
-
-[keyTime, keyCode]=KbWait([],2);
-keyName=KbName(keyCode);
-
-% while keyName~='LeftArrow' && keyName~='RightArrow'
-% while keyCode~=80 && keyCode~=79
-% arrowLeft = KbName('LeftArrow');
-% arrowRight = KbName('RightArrow');
-
-
-% while ~strcmp(keyName,'LeftArrow') && ~strcmp(keyName,'RightArrow')
-%     keyName=GetChar;
-
-
-%     if keyName == 'LeftArrow';
-    if strcmp(keyName,'LeftArrow')
+    if strcmp(keyName,'LeftArrow') % If left arrow pressed, set the rectangle to the left side
         rectPos = leftRect;
-%     rectPos = Screen('FrameRect', window, winColors, leftRect); % Draw the top rects to the screen
-%     Screen('Flip', window)
-
-%     elseif keyName == 'RightArrow';
+        wofChoice(i) = 1;   % and note the choice for the log file
     elseif strcmp(keyName,'RightArrow')
         rectPos = rightRect;
-%     Screen('FrameRect', window, winColors, rightRect); % Draw the top rects to the screen
-%     Screen('Flip', window)
-%     else
-%         KbWait([],2);
+        wofChoice(i) = 2;
     end
     
-% end
+wofTrialEndTime(i) = GetSecs; % trial time end
 
-RestrictKeysForKbCheck([]);
+RestrictKeysForKbCheck([]); % re-recognize all key presses
 
 %% show choice rect over wheels
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
@@ -323,7 +299,44 @@ RestrictKeysForKbCheck([]);
 %                     currPlayerSelection = PLAYER1MAXBID;
 %                 end
 %         end
+%% Determine results and log
 
+% Set winning portions for each wheel type
+arrowAngleL=360*lotteryOutcome(i,1); % reflects final position of arrow
+arrowAngleR=360*lotteryOutcome(i,2);
+% winResultText = ['You won ' num2str(winAmount(i)) '.'];
+% lossResultText = ['You lost ' num2str(lossAmount(i)) '.'];
+ 
+% Determine whether the selection resulted in win or loss
+if wofChoice(i) == 1    % Participant chose wheel 1
+    
+    if arrowAngleL >= 360*probLloss;   % If endpoint of arrow is greater than loss zone, win
+    winAmount(i) = wlv1(i);
+    wofEarnings(i) = winAmount(i);  % set earngings for log file
+    botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message
+    botTextColor = winColors;
+    else   % If endpoint of arrow is less than loss zone, loss
+    lossAmount(i) = wlv2(i);
+    wofEarnings(i) = 0-lossAmount(i);  % set losses for log file
+    botResultText = ['You lost ' num2str(lossAmount(i)) '.'];  % Set feedback text to losing message
+    botTextColor = loseColors;
+    end
+
+elseif wofChoice(i) == 2    % Participant chose wheel 1
+    
+    if arrowAngleR >= 360*probRloss;   % If endpoint of arrow is greater than loss zone, win
+    winAmount(i) = wrv1(i);
+    wofEarnings(i) = winAmount(i);  % set earngings for log file
+    botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message
+    botTextColor = winColors;
+    else   % If endpoint of arrow is less than loss zone, loss
+    lossAmount(i) = wrv2(i);
+    wofEarnings(i) = 0-lossAmount(i);  % set losses for log file
+    botResultText = ['You lost ' num2str(lossAmount(i)) '.'];  % Set feedback text to losing message
+    botTextColor = loseColors;
+    end
+
+end
 %% Screen 3 - Animation loop
 
 %     lotteryOutcome = 0.33;      %%!! this is the outcome of the lottery's probability roll, a number between 0 and 1
@@ -350,17 +363,20 @@ while( (angChoice < (4*360 + 360*lotteryOutcome(i,1))) || (angNonChoice < (4*360
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
         Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
+        DrawFormattedText(window, botResultText, 'center', botTextYpos, botTextColor); % Result text
         vbl  = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
 end
 
 WaitSecs(2); 
 
-% Write logfile
-% save(['oneshot-subj_' num2str(particNum) '-' DateTime], 'wofChoice', 'wofEarnings', 'trialLength');
-
-
-    
 end
+%% End-of-block calculations and create log file
+for i=1:NUMROUNDS
+        wofTrialLength(i) = wofTrialEndTime(i)-wofTrialStartTime(i);
+end
+
+% Write logfile
+% save(['oneshot-subj_' num2str(particNum) '-' DateTime], 'wofChoice', 'wofEarnings', 'wofTrialLength');
 
     WaitSecs(2);
     
