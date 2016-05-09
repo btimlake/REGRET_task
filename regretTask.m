@@ -10,7 +10,7 @@ DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
 %%% Enter participant number (taken from:
 %%% http://www.academia.edu/2614964/Creating_experiments_using_Matlab_and_Psychtoolbox)
-fail1='Please enter a participant number.'; %error message
+fail1='Please enter a participant number.'; %error  message
 prompt = {'Enter participant number:'};
 dlg_title ='New Participant';
 num_lines = 1;
@@ -122,7 +122,7 @@ lotteryOutcome = 0 + (1-0).*rand(NUMROUNDS,2); % Creates array of random outcome
 % OUTCOME4 = -50;
 % % outcome strings
 % winL = num2str(OUTCOME1);
-% loseL = num2str(OUTCOME2);
+% loseL = num2str(OUTCOME2); 
 % winR = num2str(OUTCOME3);
 % loseR = num2str(OUTCOME4);
 
@@ -402,7 +402,7 @@ if wofChoice(i) == 1    % Participant chose wheel 1
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels.wlv2(i);
     wofEarnings(i) = lossAmount(i);  % set losses for log file
-    botResultText = ['You lost ' num2str(lossAmount(i)) '.'];  % Set feedback text to losing message
+    botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message
     botTextColor = loseColors;
     end
 
@@ -416,7 +416,7 @@ elseif wofChoice(i) == 2    % Participant chose wheel 2
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels.wrv2(i);
     wofEarnings(i) = lossAmount(i);  % set losses for log file
-    botResultText = ['You lost ' num2str(lossAmount(i)) '.'];  % Set feedback text to losing message
+    botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message
     botTextColor = loseColors;
     end
 
@@ -479,7 +479,7 @@ end
 totalEarnings = sum(wofEarnings);
 
 % Write logfile
-save(['oneshot-subj_' num2str(particNum) '-' DateTime], 'wofChoice', 'wofEarnings', 'wofTrialLength');
+save(['wofPractice-subj_' num2str(particNum) '-' DateTime], 'wofChoice', 'wofEarnings', 'wofTrialLength');
 
     WaitSecs(2);
     
