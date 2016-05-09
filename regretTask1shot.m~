@@ -1,7 +1,7 @@
  % Clear the workspace and the screen
 % sca;
 % close all;
-clearvars -except particNum DateTime prop* tex* arrow*;  
+clearvars -except particNum DateTime prop* tex*;  
 
 load('regretTasktrialWheels1shot.mat')       % Load the preset wheel probabilites and values
 DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
