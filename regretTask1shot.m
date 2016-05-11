@@ -4,7 +4,7 @@
 clearvars -except particNum DateTime prop* tex* arrow*;  
 
 load('regretTasktrialWheels1shot.mat')       % Load the preset wheel probabilites and values
-DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
+% DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
 %% Screen -1: Participant number entry [delete when combined with Patent Race]
 % 
@@ -29,7 +29,7 @@ DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 %% Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
 
-Screen('Preference', 'SkipSyncTests', 2);
+% Screen('Preference', 'SkipSyncTests', 1);
 KbName('UnifyKeyNames');
 
 % Get the screen numbers
@@ -193,7 +193,7 @@ instruct19TextYpos = screenYpixels * 38/42;
 instructbotTextYpos = screenYpixels * 40/42; 
 
 % Instruction text
-instructText0 = ['Hit the SPACE bar to continue.'];
+instructText0 = ['Please wait to be told to continue.'];
 
 instructText11 = ['Now you will play the important'];
 instructText12 = ['lottery wheel game.'];
@@ -224,7 +224,7 @@ instructColb = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
 keyName=''; % empty initial value
 
 
-while(~strcmp(keyName,'space')) % continues until current keyName is space
+while(~strcmp(keyName,'1!1')) % continues until the 1 button is pressed
     
     DrawFormattedText(window, instructText11, 'center', instruct2TextYpos, instructCola); % Draw betting instructions
     DrawFormattedText(window, instructText12, 'center', instruct3TextYpos, instructCola); % Draw betting instructions
@@ -476,7 +476,7 @@ end
         DrawFormattedText(window, botResultText, 'center', botTextYpos, botTextColor); % Result text
     Screen('Flip', window)
 
-WaitSecs(2); 
+WaitSecs(4); 
 
 end
 %% End-of-block calculations and create log file

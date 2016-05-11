@@ -29,7 +29,7 @@ end
 %% Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
 
-Screen('Preference', 'SkipSyncTests', 2);
+Screen('Preference', 'SkipSyncTests', 1);
 KbName('UnifyKeyNames');
 
 % Get the screen numbers
@@ -83,6 +83,11 @@ leftwheelLeftTextYpos = screenYpixels*.43;
 leftwheelRightTextYpos = screenYpixels*.53;
 rightwheelLeftTextYpos = screenYpixels*.43;
 rightwheelRightTextYpos = screenYpixels*.53;
+
+% Set emotional rating line position
+rateLineYpos = screenYpixels * 39/80; % Screen Y position of separator line
+rateLineXposLeft = round(screenXpixels * 0.09 - screenXpixels * 2/56); % left position of text and separator line
+rateLineXposRight = round(screenXpixels * 0.91 + screenXpixels * 2/56); % right endpoint of separator line
 
 % Rect positions/dimensions based on wheel positions/dimensions
 rectWidth = screenXpixels*.3; % based on wheelRadius = (screenXpixels*.13);
@@ -470,6 +475,13 @@ end
 
 WaitSecs(2); 
 
+%% Screen 5 - Emotional rating
+
+slider_position_old = 0;
+move_slider = 1;
+
+likert_slider;
+ 
 end
 %% End-of-block calculations and create log file
 for i=1:NUMROUNDS
