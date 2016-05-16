@@ -1,7 +1,7 @@
  % Clear the workspace and the screen
 % sca;
 % close all;
-clearvars -except particNum DateTime prop* tex* arrow*;  
+clearvars -except particNum DateTime screens screenNumber window windowRect prop* tex* arrow*;  
 
 load('regretTasktrialWheels1shot.mat')       % Load the preset wheel probabilites and values
 % DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
@@ -27,17 +27,17 @@ load('regretTasktrialWheels1shot.mat')       % Load the preset wheel probabilite
 % HideCursor;
 
 %% Here we call some default settings for setting up Psychtoolbox
-PsychDefaultSetup(2);
+% PsychDefaultSetup(2);
 
 % Screen('Preference', 'SkipSyncTests', 1);
-KbName('UnifyKeyNames');
-
-% Get the screen numbers
-screens = Screen('Screens');
-
-% Draw to the external screen if avaliable
-% screenNumber = max(screens);
-screenNumber = 0;
+% KbName('UnifyKeyNames');
+% 
+% % Get the screen numbers
+% screens = Screen('Screens');
+% 
+% % Draw to the external screen if avaliable
+% % screenNumber = max(screens);
+% screenNumber = 0;
 
 % Define black and white and other colors
 white = WhiteIndex(screenNumber);
@@ -52,7 +52,7 @@ loseColors = [.8039, .2157, 0]; %OrangeRed3
 chooseColors = [1, .84, 0]; %Gold
 
 % Open an on screen window
-[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]);
+% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]);
 % [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white);
 
 % Get the size of the on screen window
@@ -79,10 +79,10 @@ leftwheelLeftTextXpos = screenXpixels*.035;
 leftwheelRightTextXpos = screenXpixels*.40;
 rightwheelLeftTextXpos = screenXpixels*.52;
 rightwheelRightTextXpos = screenXpixels*.91;
-leftwheelLeftTextYpos = screenYpixels*.43;
-leftwheelRightTextYpos = screenYpixels*.53;
-rightwheelLeftTextYpos = screenYpixels*.43;
-rightwheelRightTextYpos = screenYpixels*.53;
+leftwheelLeftTextYpos = screenYpixels*.53;
+leftwheelRightTextYpos = screenYpixels*.43;
+rightwheelLeftTextYpos = screenYpixels*.53;
+rightwheelRightTextYpos = screenYpixels*.43;
 
 % Rect positions/dimensions based on wheel positions/dimensions
 rectWidth = screenXpixels*.3; % based on wheelRadius = (screenXpixels*.13);
@@ -114,7 +114,7 @@ fontSize = round(screenYpixels * 2/40);
     
 % Set some variables
 NUMROUNDS = 1;
-lotteryOutcome1shot = [0.21 0.8; 0.54 0.15]; % Creates array of outcomes for both wheels for either left choice (:,1) or right choice (:,2)
+lotteryOutcome1shot = [.70*regretTasktrialWheels1shot.wlp2 1.6*regretTasktrialWheels1shot.wrp2; 1.7*regretTasktrialWheels1shot.wlp2 0.8*regretTasktrialWheels1shot.wrp2]; % Creates array of outcomes for both wheels for either left choice (:,1) or right choice (:,2)
 
 % outcome values from earlier iterations
 % OUTCOME1 = 50;
@@ -224,7 +224,7 @@ instructColb = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
 keyName=''; % empty initial value
 
 
-while(~strcmp(keyName,'1!1')) % continues until the 1 button is pressed
+while(~strcmp(keyName,'1!')) % continues until the 1 button is pressed
     
     DrawFormattedText(window, instructText11, 'center', instruct2TextYpos, instructCola); % Draw betting instructions
     DrawFormattedText(window, instructText12, 'center', instruct3TextYpos, instructCola); % Draw betting instructions
@@ -477,6 +477,13 @@ end
     Screen('Flip', window)
 
 WaitSecs(4); 
+%% Screen 5 - Emotional rating
+
+currentRound = i;
+
+[currRatingSelection, ratingDuration] = likert_slider(window, windowRect);
+ 
+emotionalRating = currRatingSelection;
 
 end
 %% End-of-block calculations and create log file
@@ -487,9 +494,9 @@ end
 totalEarnings = sum(wofEarnings);
 
 % Write logfile
-save(['oneshot-subj_' num2str(particNum) '-' DateTime], 'wofChoice', 'wofEarnings', 'wofTrialLength');
+save([num2str(particNum) '-' DateTime '_2oneshot-subj'], 'wofChoice', 'wofEarnings', 'wofTrialLength', 'emotionalRating', 'ratingDuration');
 
     WaitSecs(2);
     
 % Clear the screen
-sca;
+% sca;

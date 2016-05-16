@@ -1,47 +1,47 @@
 % Clear the workspace and the screen
-sca;
-close all;
-clearvars;
+% sca;
+% close all;
+% clearvars;
 
 load('regretTasktrialWheels.mat')       % Load the preset wheel probabilites and values
-DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
+% DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
 %% Screen -1: Participant number entry [delete when combined with Patent Race]
-
-%%% Enter participant number (taken from:
-%%% http://www.academia.edu/2614964/Creating_experiments_using_Matlab_and_Psychtoolbox)
-fail1='Please enter a participant number.'; %error  message
-prompt = {'Enter participant number:'};
-dlg_title ='New Participant';
-num_lines = 1;
-def = {'0'};
-answer = inputdlg(prompt,dlg_title,num_lines,def);%presents box to enterdata into
-switch isempty(answer)
-    case 1 %deals with both cancel and X presses 
-        error(fail1)
-    case 0
-        particNum=(answer{1});
-end
+% 
+% %%% Enter participant number (taken from:
+% %%% http://www.academia.edu/2614964/Creating_experiments_using_Matlab_and_Psychtoolbox)
+% fail1='Please enter a participant number.'; %error  message
+% prompt = {'Enter participant number:'};
+% dlg_title ='New Participant';
+% num_lines = 1;
+% def = {'0'};
+% answer = inputdlg(prompt,dlg_title,num_lines,def);%presents box to enterdata into
+% switch isempty(answer)
+%     case 1 %deals with both cancel and X presses 
+%         error(fail1)
+%     case 0
+%         particNum=(answer{1});
+% end
 
 % uncomment after debugging
 % HideCursor;
 
 %% Here we call some default settings for setting up Psychtoolbox
-PsychDefaultSetup(2);
-
-Screen('Preference', 'SkipSyncTests', 1);
-KbName('UnifyKeyNames');
-
-% Get the screen numbers
-screens = Screen('Screens');
-
-% Draw to the external screen if avaliable
-% screenNumber = max(screens);
-screenNumber = 0;
+% PsychDefaultSetup(2);
+% 
+% Screen('Preference', 'SkipSyncTests', 1);
+% KbName('UnifyKeyNames');
+% 
+% % Get the screen numbers
+% screens = Screen('Screens');
+% 
+% % Draw to the external screen if avaliable
+% % screenNumber = max(screens);
+% screenNumber = 0;
 
 % Define black and white and other colors
-white = WhiteIndex(screenNumber);
-black = BlackIndex(screenNumber);
+% white = WhiteIndex(screenNumber);
+% black = BlackIndex(screenNumber);
 BG=[1 1 1]; % set background color of PNG imports
 % NOTE that colors now have to be in the set [0,1], so to get values, just 
 % divide old RGB amounts by 255
@@ -51,8 +51,8 @@ loseColors = [.8039, .2157, 0]; %OrangeRed3
 % loseColors = black; %black
 chooseColors = [1, .84, 0]; %Gold
 
-% Open an on screen window
-[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]);
+% % Open an on screen window
+% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]);
 % [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white);
 
 % Get the size of the on screen window
@@ -79,10 +79,10 @@ leftwheelLeftTextXpos = screenXpixels*.035;
 leftwheelRightTextXpos = screenXpixels*.40;
 rightwheelLeftTextXpos = screenXpixels*.52;
 rightwheelRightTextXpos = screenXpixels*.91;
-leftwheelLeftTextYpos = screenYpixels*.43;
-leftwheelRightTextYpos = screenYpixels*.53;
-rightwheelLeftTextYpos = screenYpixels*.43;
-rightwheelRightTextYpos = screenYpixels*.53;
+leftwheelLeftTextYpos = screenYpixels*.53;
+leftwheelRightTextYpos = screenYpixels*.43;
+rightwheelLeftTextYpos = screenYpixels*.53;
+rightwheelRightTextYpos = screenYpixels*.43;
 
 % Set emotional rating line position
 rateLineYpos = screenYpixels * 39/80; % Screen Y position of separator line
@@ -477,23 +477,25 @@ WaitSecs(2);
 
 %% Screen 5 - Emotional rating
 
-slider_position_old = 0;
-move_slider = 1;
+currentRound = i;
 
-likert_slider;
+[currRatingSelection(i), ratingDuration(i)] = likert_slider(window, windowRect);
  
+emotionalRating(i) = currRatingSelection(i);
+
 end
 %% End-of-block calculations and create log file
 for i=1:NUMROUNDS
         wofTrialLength(i) = wofTrialEndTime(i)-wofTrialStartTime(i);
+%         ratingDuration(i) = ratingEndTime(i)-ratingStartTime(i);
 end
 
 totalEarnings = sum(wofEarnings);
 
 % Write logfile
-save(['wofPractice-subj_' num2str(particNum) '-' DateTime], 'wofChoice', 'wofEarnings', 'wofTrialLength');
+save([num2str(particNum) '-' DateTime '_1wofPractice-subj'], 'wofChoice', 'wofEarnings', 'wofTrialLength', 'emotionalRating', 'ratingDuration');
 
     WaitSecs(2);
     
 % Clear the screen
-sca;
+% sca;
