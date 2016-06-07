@@ -3,7 +3,8 @@
 % close all;
 % clearvars;
 
-load('regretTasktrialWheels.mat')       % Load the preset wheel probabilites and values
+load('regretTasktrialWheels.mat')       % Load the preset wheel probabilites and values TABLE
+% load('regretTasktrialWheelsDataset.mat')       % Load the preset wheel probabilites and values DATASET
 % DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
 %% Screen -1: Participant number entry [delete when combined with Patent Race]
@@ -344,16 +345,17 @@ end
  
 wofTrialStartTime(i) = GetSecs; % trial time start
 
-RestrictKeysForKbCheck([79, 80]); % limit recognized presses to left and right arrows
+RestrictKeysForKbCheck([79, 80]); % limit recognized presses to left and right arrows MAC
+% RestrictKeysForKbCheck([37,39]); % limit recognized presses to left and right arrows PC
 [keyTime, keyCode]=KbWait([],2); % Wait for a key to be pushed and released
 keyName=KbName(keyCode); % get the name of which key was pressed
 
     if strcmp(keyName,'LeftArrow') % If left arrow pressed, set the rectangle to the left side
         rectPos = leftRect;
-        wofChoice(i) = 1;   % and note the choice for the log file
+        wofChoice(i,1) = 1;   % and note the choice for the log file
     elseif strcmp(keyName,'RightArrow')
         rectPos = rightRect;
-        wofChoice(i) = 2;
+        wofChoice(i,1) = 2;
     end
     
 wofTrialEndTime(i) = GetSecs; % trial time end
@@ -397,30 +399,30 @@ arrowAngleR=360*lotteryOutcome(i,2);
 % lossResultText = ['You lost ' num2str(lossAmount(i)) '.'];
  
 % Determine whether the selection resulted in win or loss
-if wofChoice(i) == 1    % Participant chose wheel 1
+if wofChoice(i,1) == 1    % Participant chose wheel 1
     
     if arrowAngleL > 360*regretTasktrialWheels.wlp2(i);   % If endpoint of arrow is greater than loss zone, win
     winAmount(i) = regretTasktrialWheels.wlv1(i);
-    wofEarnings(i) = winAmount(i);  % set earngings for log file
+    wofEarnings(i,1) = winAmount(i);  % set earngings for log file
     botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message
     botTextColor = winColors;
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels.wlv2(i);
-    wofEarnings(i) = lossAmount(i);  % set losses for log file
+    wofEarnings(i,1) = lossAmount(i);  % set losses for log file
     botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message
     botTextColor = loseColors;
     end
 
-elseif wofChoice(i) == 2    % Participant chose wheel 2
+elseif wofChoice(i,1) == 2    % Participant chose wheel 2
     
     if arrowAngleR > 360*regretTasktrialWheels.wrp2(i);   % If endpoint of arrow is greater than loss zone, win
     winAmount(i) = regretTasktrialWheels.wrv1(i);
-    wofEarnings(i) = winAmount(i);  % set earngings for log file
+    wofEarnings(i,1) = winAmount(i);  % set earngings for log file
     botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message
     botTextColor = winColors;
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels.wrv2(i);
-    wofEarnings(i) = lossAmount(i);  % set losses for log file
+    wofEarnings(i,1) = lossAmount(i);  % set losses for log file
     botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message
     botTextColor = loseColors;
     end
@@ -479,21 +481,23 @@ WaitSecs(2);
 
 currentRound = i;
 
-[currRatingSelection(i), ratingDuration(i)] = likert_slider(window, windowRect);
+[currRatingSelection(i), ratingDuration(i,1)] = likert_slider(window, windowRect);
  
-emotionalRating(i) = currRatingSelection(i);
+emotionalRating(i,1) = currRatingSelection(i);
 
 end
 %% End-of-block calculations and create log file
 for i=1:NUMROUNDS
-        wofTrialLength(i) = wofTrialEndTime(i)-wofTrialStartTime(i);
+        wofTrialLength(i,1) = wofTrialEndTime(i)-wofTrialStartTime(i);
 %         ratingDuration(i) = ratingEndTime(i)-ratingStartTime(i);
 end
 
 totalEarnings = sum(wofEarnings);
 
+% wofTrialLength = wofTrialLength';
+
 % Write logfile
-save([num2str(particNum) '-' DateTime '_1wofPractice-subj'], 'wofChoice', 'wofEarnings', 'wofTrialLength', 'emotionalRating', 'ratingDuration');
+save([num2str(particNum) '-' DateTime '_1wofPractice-subj'], 'regretTasktrialWheels', 'wofChoice', 'wofEarnings', 'wofTrialLength', 'emotionalRating', 'ratingDuration');
 
     WaitSecs(2);
     

@@ -3,7 +3,8 @@
 % close all;
 clearvars -except particNum DateTime screens screenNumber window windowRect prop* tex* arrow*;  
 
-load('regretTasktrialWheels1shot.mat')       % Load the preset wheel probabilites and values
+load('regretTasktrialWheels1shot.mat')       % Load the preset wheel probabilites and values TABLE
+% load('regretTasktrialWheels1shotDataset.mat')       % Load the preset wheel probabilites and values DATASET
 % DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
 %% Screen -1: Participant number entry [delete when combined with Patent Race]
@@ -340,7 +341,8 @@ end
  
 wofTrialStartTime(i) = GetSecs; % trial time start
 
-RestrictKeysForKbCheck([79, 80]); % limit recognized presses to left and right arrows
+RestrictKeysForKbCheck([79, 80]); % limit recognized presses to left and right arrows MAC
+% RestrictKeysForKbCheck([37,39]); % limit recognized presses to left and right arrows PC
 [keyTime, keyCode]=KbWait([],2); % Wait for a key to be pushed and released
 keyName=KbName(keyCode); % get the name of which key was pressed
 
@@ -494,7 +496,7 @@ end
 totalEarnings = sum(wofEarnings);
 
 % Write logfile
-save([num2str(particNum) '-' DateTime '_2oneshot-subj'], 'wofChoice', 'wofEarnings', 'wofTrialLength', 'emotionalRating', 'ratingDuration');
+save([num2str(particNum) '-' DateTime '_2oneshot-subj'], 'regretTasktrialWheels1shot', 'wofChoice', 'wofEarnings', 'wofTrialLength', 'emotionalRating', 'ratingDuration');
 
     WaitSecs(2);
     
