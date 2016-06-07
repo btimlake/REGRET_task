@@ -115,7 +115,16 @@ fontSize = round(screenYpixels * 2/40);
     
 % Set some variables
 NUMROUNDS = 1;
-lotteryOutcome1shot = [.70*regretTasktrialWheels1shot.wlp2 1.6*regretTasktrialWheels1shot.wrp2; 1.7*regretTasktrialWheels1shot.wlp2 0.8*regretTasktrialWheels1shot.wrp2]; % Creates array of outcomes for both wheels for either left choice (:,1) or right choice (:,2)
+% Generate random percentages in a uniform distributin within certain desired range on the interval [a, b] with r = a + (b-a).*rand(100,1).
+wlp2r1 = .60 + (.85-.60).*rand(1); % range .60-.85
+wrp2r1 = 1.2 + (1.9-1.2).*rand(1);
+wlp2r2 = 1.2 + (1.9-1.2).*rand(1);
+wrp2r2 = .60 + (.85-.60).*rand(1);
+% Generate pseudo-random outcomes with determined win/loss results
+lotteryOutcome1shot = [wlp2r1*regretTasktrialWheels1shot.wlp2 wrp2r1*regretTasktrialWheels1shot.wrp2; wlp2r2*regretTasktrialWheels1shot.wlp2 wrp2r2*regretTasktrialWheels1shot.wrp2]; % Creates array of outcomes for both wheels for either left choice (:,1) or right choice (:,2)
+
+% lotteryOutcome1shot = [.70*regretTasktrialWheels1shot.wlp2 1.6*regretTasktrialWheels1shot.wrp2; 1.7*regretTasktrialWheels1shot.wlp2 0.8*regretTasktrialWheels1shot.wrp2]; % Creates array of outcomes for both wheels for either left choice (:,1) or right choice (:,2)
+% randvalues = [.60 + (.85-.60).*rand(1) 1.2 + (1.9-1.2).*rand(1); 1.2 + (1.9-1.2).*rand(1) .60 + (.85-.60).*rand(1)]
 
 % outcome values from earlier iterations
 % OUTCOME1 = 50;

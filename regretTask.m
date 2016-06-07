@@ -119,7 +119,7 @@ fontSize = round(screenYpixels * 2/40);
     Screen('TextColor', window, [0, 0, 0]);
     
 % Set some variables
-NUMROUNDS = 3;
+NUMROUNDS = 10;
 lotteryOutcome = 0 + (1-0).*rand(NUMROUNDS,2); % Creates array of random outcome probabilities for both wheels in each round
 % outcome values from earlier iterations
 % OUTCOME1 = 50;
@@ -299,7 +299,7 @@ switch probL
     case {'0.25'}
     wheelL=texProb25;
     case {'0.33'}
-    wheelL=texProb3';
+    wheelL=texProb33';
     case {'0.5'}
     wheelL=texProb50;
     case {'0.66'}
