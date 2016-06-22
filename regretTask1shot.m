@@ -507,7 +507,12 @@ totalEarnings = sum(wofEarnings);
 % Write logfile
 save([num2str(particNum) '-' DateTime '_2oneshot-subj'], 'regretTasktrialWheels1shot', 'wofChoice', 'wofEarnings', 'wofTrialLength', 'emotionalRating', 'ratingDuration');
 
-    WaitSecs(2);
+%% Screen 6 - Wait screen
+message = 'Si prega di attendere per un attimo.';
+DrawFormattedText(window, message, 'center', 'center', instructCola); % Draw wait message
+Screen('Flip', window);
+
+WaitSecs(10);
     
 % Clear the screen
 % sca;
